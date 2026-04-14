@@ -8,11 +8,15 @@ class LightBacktester:
     Does not touch the database.
 
     CANONICAL EXECUTION MODEL ("Next-Bar-Open Sandbox"):
-    To ensure backtest results are strictly comparable to live production, 
-    this tester mathematically executes orders at `next_bar['open']`. 
-    In the live system, this is mirrored exactly: the Runner evaluates 
-    signals upon confirming a bar close, and immediately fires `fetch_ticker()` 
-    to execute at the opening tick of the new bar.
+    This tester mathematically executes orders at `next_bar['open']`. 
+    In the live system, the Runner evaluates signals upon confirming a bar close, 
+    and immediately fires `fetch_ticker()` to approximate this target price.
+    
+    WARNING: While structurally aligned, live execution via `fetch_ticker()` 
+    is NOT identical to the idealized `next_bar['open']`. Live results will differ 
+    due to thin order books, opening gaps, API delays, and fast market moves 
+    immediately following the bar close. Backtests should be treated as 
+    directional simulations, not exact equivalents.
     """
     def __init__(self, initial_balance=100000, pessimism_factor=0.002):
         self.initial_balance = initial_balance
