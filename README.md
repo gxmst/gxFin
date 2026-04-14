@@ -105,10 +105,10 @@ uv run python -m app.runtime.runner
 
 ### 4. 启动 UI
 
-默认访问端口为 `8501`。
+默认访问端口为 `8501`。如果您在远程 VPS 上部署，务必指定绑定的公网 IP 参数：
 
 ```bash
-uv run streamlit run app/ui/main.py
+uv run streamlit run app/ui/main.py --server.port 8501 --server.address 0.0.0.0
 ```
 
 ## 策略开发
