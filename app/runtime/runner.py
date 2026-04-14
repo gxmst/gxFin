@@ -1,6 +1,7 @@
 import os
 import time
 import logging
+from logging.handlers import RotatingFileHandler
 from datetime import datetime, timezone
 import pandas as pd
 
@@ -26,7 +27,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(LOG_FILE, encoding='utf-8'),
+        RotatingFileHandler(LOG_FILE, maxBytes=5*1024*1024, backupCount=3, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -118,6 +119,12 @@ class TradingRunner:
             status.is_running = self.is_running
             status.current_strategy = self.current_strategy.name if self.current_strategy else "None"
             status.updated_at = datetime.utcnow()
+            
+            # Sync pessimism factor from UI
+            if status.pessimism_factor is not None and self.broker.pessimism_factor != status.pessimism_factor:
+                self.broker.pessimism_factor = status.pessimism_factor
+                logger.info(f"Updated pessimism factor to {status.pessimism_factor}")
+            
             self.db.commit()
 
     def execute_tick(self):

@@ -56,6 +56,7 @@ class AppStatus(Base):
     id = Column(Integer, primary_key=True)
     current_strategy = Column(String(100))
     is_running = Column(Boolean, default=False)
+    pessimism_factor = Column(Float, default=0.002)
     last_tick_time = Column(DateTime)
     last_error = Column(Text)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -88,9 +89,19 @@ def init_db():
         initial_account = AccountState(balance=100000.0)
         db.add(initial_account)
     if db.query(AppStatus).count() == 0:
-        initial_status = AppStatus(is_running=False)
+        initial_status = AppStatus(is_running=False, pessimism_factor=0.002)
         db.add(initial_status)
     db.commit()
+
+    # DB Migration: Inject pessimism_factor if it doesn't exist
+    from sqlalchemy import text
+    try:
+        db.execute(text("SELECT pessimism_factor FROM app_status LIMIT 1"))
+    except Exception:
+        db.rollback()
+        db.execute(text("ALTER TABLE app_status ADD COLUMN pessimism_factor FLOAT DEFAULT 0.002"))
+        db.commit()
+
     db.close()
 
 def get_db():

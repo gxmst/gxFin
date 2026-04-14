@@ -11,6 +11,7 @@ from app.data.stock_provider import StockProvider
 from app.strategy.strategy_loader import StrategyLoader
 from app.strategy.backtester import LightBacktester
 import logging
+from logging.handlers import RotatingFileHandler
 
 # Load environment variables
 load_dotenv()
@@ -23,7 +24,7 @@ LOG_FILE = os.path.join(LOG_DIR, 'gxfin.log')
 # Setup UI Logging to shared file
 ui_logger = logging.getLogger("gxFin.UI")
 if not ui_logger.handlers:
-    fh = logging.FileHandler(LOG_FILE, encoding='utf-8')
+    fh = RotatingFileHandler(LOG_FILE, maxBytes=5*1024*1024, backupCount=3, encoding='utf-8')
     fh.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
     ui_logger.addHandler(fh)
     ui_logger.setLevel(logging.INFO)
@@ -96,6 +97,15 @@ if status:
 st.sidebar.divider()
 st.sidebar.subheader("🛡️ 安全提示")
 st.sidebar.warning("本系统不支持沙箱环境隔离。策略文件具有系统层级访问权限，请勿运行任何未经审核的代码。")
+st.sidebar.divider()
+st.sidebar.subheader("调参设置")
+current_pessimism = float(status.pessimism_factor) if getattr(status, 'pessimism_factor', None) is not None else 0.002
+ui_pessimism = st.sidebar.slider("模拟滑点/手续费 (%)", 0.0, 1.0, current_pessimism * 100, 0.05, help="影响双向摩擦成本")
+new_pessimism = ui_pessimism / 100.0
+if abs(current_pessimism - new_pessimism) > 0.0001:
+    status.pessimism_factor = new_pessimism
+    db.commit()
+
 st.sidebar.divider()
 st.sidebar.subheader("核心执行配置")
 strat_name = st.sidebar.selectbox("启用策略", available_strategies if available_strategies else ["无"])
