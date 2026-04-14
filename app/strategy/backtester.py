@@ -6,6 +6,13 @@ class LightBacktester:
     """
     Minimal memory-only backtest engine.
     Does not touch the database.
+
+    CANONICAL EXECUTION MODEL ("Next-Bar-Open Sandbox"):
+    To ensure backtest results are strictly comparable to live production, 
+    this tester mathematically executes orders at `next_bar['open']`. 
+    In the live system, this is mirrored exactly: the Runner evaluates 
+    signals upon confirming a bar close, and immediately fires `fetch_ticker()` 
+    to execute at the opening tick of the new bar.
     """
     def __init__(self, initial_balance=100000, pessimism_factor=0.002):
         self.initial_balance = initial_balance

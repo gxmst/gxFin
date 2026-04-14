@@ -86,7 +86,8 @@ def init_db():
     # Initialize default account state if not exists
     db = SessionLocal()
     if db.query(AccountState).count() == 0:
-        initial_account = AccountState(balance=100000.0)
+        initial_balance = float(os.getenv("INITIAL_BALANCE", 100000.0))
+        initial_account = AccountState(balance=initial_balance)
         db.add(initial_account)
     if db.query(AppStatus).count() == 0:
         initial_status = AppStatus(is_running=False, pessimism_factor=0.002)

@@ -166,7 +166,8 @@ with tab2:
             df_hist = bt_provider.fetch_ohlcv_with_cache(bt_symbol, bt_timeframe, limit=1000)
             
             if not df_hist.empty:
-                tester = LightBacktester(pessimism_factor=0.002)
+                init_balance = float(os.getenv("INITIAL_BALANCE", 100000.0))
+                tester = LightBacktester(initial_balance=init_balance, pessimism_factor=current_pessimism)
                 strat_class = loader.get_strategy_class(bt_strat)
                 if strat_class:
                     strategy = strat_class()
