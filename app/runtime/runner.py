@@ -118,7 +118,7 @@ class TradingRunner:
         if status:
             status.is_running = self.is_running
             status.current_strategy = self.current_strategy.name if self.current_strategy else "None"
-            status.updated_at = datetime.utcnow()
+            status.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
             
             # Sync pessimism factor from UI
             if status.pessimism_factor is not None and self.broker.pessimism_factor != status.pessimism_factor:

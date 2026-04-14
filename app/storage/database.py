@@ -4,6 +4,10 @@ from sqlalchemy import create_engine, Column, Integer, Float, String, DateTime, 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import event
+from datetime import timezone
+
+def utcnow_naive():
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 Base = declarative_base()
 
@@ -31,7 +35,7 @@ class TradeHistory(Base):
     commission = Column(Float)
     slippage = Column(Float)
     total_cost = Column(Float)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=utcnow_naive)
 
 class AccountState(Base):
     __tablename__ = 'account_state'
@@ -40,7 +44,7 @@ class AccountState(Base):
     position_qty = Column(Float, default=0.0)
     position_avg_price = Column(Float, default=0.0)
     realized_pnl = Column(Float, default=0.0)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=utcnow_naive)
 
 class SystemCommand(Base):
     __tablename__ = 'system_commands'
@@ -49,7 +53,7 @@ class SystemCommand(Base):
     command = Column(String(50))
     params = Column(JSON)
     status = Column(String(20), default='PENDING')  # PENDING, EXECUTED, FAILED
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utcnow_naive)
 
 class AppStatus(Base):
     __tablename__ = 'app_status'
@@ -59,7 +63,7 @@ class AppStatus(Base):
     pessimism_factor = Column(Float, default=0.002)
     last_tick_time = Column(DateTime)
     last_error = Column(Text)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, default=utcnow_naive, onupdate=utcnow_naive)
 
 # Database Engine Setup
 DB_PATH = os.path.join(os.getcwd(), 'data', 'gxfin.db')

@@ -88,7 +88,8 @@ if status:
     
     # Heartbeat check
     if status.updated_at:
-        seconds_since_update = (datetime.utcnow() - status.updated_at).total_seconds()
+        from datetime import timezone
+        seconds_since_update = (datetime.now(timezone.utc).replace(tzinfo=None) - status.updated_at).total_seconds()
         if seconds_since_update > 60:
             st.sidebar.warning("⚠️ 引擎可能已离线")
     

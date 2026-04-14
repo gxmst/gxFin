@@ -1,6 +1,7 @@
 [project]
 name = "gxfin"
 version = "0.1.0"
+requires-python = ">=3.9"
 description = "Lightweight Quantitative Trading Simulation and Backtesting System"
 dependencies = [
     "streamlit>=1.31.0",

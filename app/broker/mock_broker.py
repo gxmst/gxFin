@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from ..storage.database import AccountState, TradeHistory
 
@@ -86,7 +86,7 @@ class MockBroker:
             price=price,
             qty=qty,
             total_cost=total_cost,
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc).replace(tzinfo=None)
         )
         self.db.add(trade)
         self.logger.info(f"Simulated {action} at {price:.4f} for {symbol}. Qty: {qty:.4f}")

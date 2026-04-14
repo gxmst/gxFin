@@ -100,13 +100,15 @@ cp .env.example .env
 ### 3. 启动 Runner
 
 ```bash
-python -m app.runtime.runner
+uv run python -m app.runtime.runner
 ```
 
 ### 4. 启动 UI
 
+默认访问端口为 `8501`。
+
 ```bash
-streamlit run app/ui/main.py
+uv run streamlit run app/ui/main.py
 ```
 
 ## 策略开发
