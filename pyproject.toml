@@ -1,0 +1,18 @@
+[project]
+name = "gxfin"
+version = "0.1.0"
+description = "Lightweight Quantitative Trading Simulation and Backtesting System"
+dependencies = [
+    "streamlit>=1.31.0",
+    "pandas>=2.1.0",
+    "ccxt>=4.1.0",
+    "yfinance>=0.2.36",
+    "plotly>=5.18.0",
+    "sqlalchemy>=2.0.0",
+    "apscheduler>=3.10.1",
+    "python-dotenv>=1.0.0",
+    "pytz>=2023.3",
+]
+
+[tool.uv]
+package = true
